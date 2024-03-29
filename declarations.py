@@ -71,7 +71,6 @@ ConstructorStandings = {
     "pointHistoryFIA" :  [0,0,0,0,0,0,0,0,0,0]
 }
 
-
 our_points = [22, 18, 15, 12, 10, 8 , 6, 5, 4, 3 ,2 ,1, 0, 0, 0, 0, 0, 0, 0, 0]
 
 grand_prix = ["bahrain","saudi-arabia", "australia"]

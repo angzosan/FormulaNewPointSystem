@@ -1,9 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import tkinter as tk
 import declarations
 
 def scrapping(url): 
@@ -16,11 +14,8 @@ def scrapping(url):
     rows = table.find_all('tr')
     return rows
 
-
 driverStandingsDF      = pd.DataFrame(declarations.driverStandings)
 ConstructorStandingsDF = pd.DataFrame(declarations.ConstructorStandings)
-
-
 
 for j in range(len(declarations.grand_prix)):
     
@@ -71,9 +66,6 @@ for j in range(len(declarations.grand_prix)):
 
             driverStandingsDF.at[row_index, 'pointHistoryFIA'].append(int (single_data[7]) + driverStandingsDF.loc[row_index, "pointHistoryFIA"][-1]  ) 
             ConstructorStandingsDF.loc[team_index,'pointHistoryFIA'] = int (ConstructorStandingsDF.loc[team_index,'pointHistoryFIA'])  + int (single_data[7])
-
-
-
 
     #special cases - TOFIX      
     if j == 1 :

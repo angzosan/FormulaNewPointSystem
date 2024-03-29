@@ -5,12 +5,7 @@ NavigationToolbar2Tk)
 from plotly.subplots import make_subplots
 import declarations
 import F1_new_point_system
-import plotly.express as px
 import plotly.graph_objects as go
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-
 
 fig = make_subplots(rows=1, cols=2)
 

@@ -5,7 +5,6 @@ import F1_new_point_system
 import plotly.graph_objects as go
 
 fig = make_subplots(rows=1, cols=2)
-
 # adding the driver's traces to a graph plot
 for _,row in F1_new_point_system.driverStandingsDF.iterrows():
     #for the drivers that didn't score points, they are appointed with the same points they had till the previous race

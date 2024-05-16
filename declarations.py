@@ -60,8 +60,8 @@ teams = {
 }
 
 missed_races = {
-    "raceId"   : [1,2,3,4,5],
-    "driverId" : [[],[55],[2],[],[]]
+    "raceId"   : [1,2,3,4,5,6],
+    "driverId" : [[],[55],[2],[],[],[]]
 }
 
 driverStandings = {
@@ -78,7 +78,13 @@ ConstructorStandings = {
 
 our_points = [22, 18, 15, 12, 10, 8 , 6, 5, 4, 3 ,2 ,1, 0, 0, 0, 0, 0, 0, 0, 0]
 
-grand_prix = ["bahrain","saudi-arabia", "australia", "japan","china"]
-gp_code    = ["1229","1230", "1231","1232","1233"]
+sprint_points = [8, 7, 6, 5, 4, 3 , 2, 1, 0, 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0, 0]
+
+grand_prix = ["bahrain","saudi-arabia", "australia", "japan","china","miami"]
+gp_code    = ["1229","1230", "1231","1232","1233","1234"]
+
+sprint_weekends = [0,0,0,0,1,1]
+
+#grand_prix = ["bahrain","italy", "portugal", "spain","monaco","azerbaijan", "france", "styria","austria", "great-britain", "hungary","belgium","netherlands", "italy", "russia","turkey", "united-states", "mexico","brazil","qatar", "saudi-arabia","abu-dhabi"]
 
 YEAR       = "2024"

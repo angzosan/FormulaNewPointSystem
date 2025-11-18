@@ -64,7 +64,7 @@ for race in range(len(declarations.grand_prix)):
         sprint_results = scrape("sprint-results")
         sprint = 1
         
-    for i in range(1, len(race_results)):
+    for i in range(1, len(race_results)): # for each driver
         if sprint == 1 :
             fia_points = declarations.sprint_points[i-1]
             new_points = declarations.sprint_points[i-1]
@@ -80,5 +80,5 @@ for race in range(len(declarations.grand_prix)):
         #set the fastest lap point if the driver is within the new system's point range
        # if ( int (fastest_lap_id[2]) == int (single_data[2]) and points > 0):
         #    points = points + 1
-        #         
-    driverStandingsDF = utils.missed_races(missed_racesDF, race, driverStandingsDF)   
+        #        
+    utils.pad_all_histories(driverStandingsDF, race)

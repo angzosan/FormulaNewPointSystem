@@ -4,6 +4,8 @@ import declarations
 import F1_new_point_system
 import plotly.graph_objects as go
 
+F1_new_point_system.run(2024)
+
 fig = make_subplots(rows=1, cols=2)
 # adding the driver's traces to a graph plot
 for _,row in F1_new_point_system.driverStandingsDF.iterrows():

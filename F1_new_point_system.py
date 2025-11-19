@@ -3,10 +3,34 @@ import pandas as pd
 import utils
 import declarations
 
+def get_all_races_per_year(year:int):
+    url = f'https://www.formula1.com/en/results/{year}/races'
+    all_races_tr_tags = utils.scrapping(url)
+    all_races_tr_tags = all_races_tr_tags[1:]
+    url_race_map_array = []
+    for race in all_races_tr_tags:
+        url_race_map_array.append(strip_race(race))
+    return url_race_map_array
+
 
 def scrape(part):
-    url ="https://www.formula1.com/en/results/"+declarations.YEAR+"/races/"+declarations.gp_code[race]+"/"+declarations.grand_prix[race]+"/"+ part
+    url ="https://www.formula1.com" + part
     return  utils.scrapping(url) 
+
+def strip_race(race):
+    race_data = race.find_all('td')
+    for td in race_data:  # loop over each <td>
+        a = td.find("a", href=True)  # find the single <a>
+        if a:
+            # Remove <svg> if present
+            for svg in a.find("svg"):
+                svg.decompose()
+            
+            link_info = {
+                "url": a["href"],
+                "country": a.get_text(strip=True)
+            }
+    return link_info
 
 def strip(results):
     driver_data = results.find_all('td')
@@ -15,9 +39,9 @@ def strip(results):
         elements.append(dd.text.strip()) 
     return [elements[1], elements[3]] # [1, "Red Bull"]
 
-def add_new_driver(new_points, fia_points, driverId, driverStandingsDF):
-    new_system    = [ 0 for _ in range(race)]
-    points_FIA = [ 0 for _ in range(race)]
+def add_new_driver(new_points, fia_points, driverId, driverStandingsDF, race_index):
+    new_system    = [ 0 for _ in range(race_index)]
+    points_FIA = [ 0 for _ in range(race_index)]
 
     points_FIA.append(fia_points) 
     new_system.append(new_points)
@@ -30,11 +54,11 @@ def add_new_driver(new_points, fia_points, driverId, driverStandingsDF):
     driverStandingsDF = pd.concat([driverStandingsDF, pd.DataFrame([row])], ignore_index=True)
     return driverStandingsDF
 
-def append_points(results,fia_points,new_points, driverStandingsDF):
+def append_points(results,fia_points,new_points, driverStandingsDF, race_index):
 
     single_data = strip(results)
     if int (single_data[0]) not in driverStandingsDF["driverId"].values : 
-        driverStandingsDF = add_new_driver(new_points=new_points, fia_points=fia_points, driverId=single_data[0], driverStandingsDF=driverStandingsDF)
+        driverStandingsDF = add_new_driver(new_points=new_points, fia_points=fia_points, driverId=single_data[0], driverStandingsDF=driverStandingsDF, race_index=race_index)
            
     else:
         #update dataframe row if driver is already in the dataframe
@@ -46,39 +70,47 @@ def append_points(results,fia_points,new_points, driverStandingsDF):
       #  ConstructorStandingsDF.loc[team_index,'pointHistory']    = int (ConstructorStandingsDF.loc[team_index,'pointHistory']) + points
       #  ConstructorStandingsDF.loc[team_index,'pointHistoryFIA'] = int (ConstructorStandingsDF.loc[team_index,'pointHistoryFIA'])  + int (single_data[7])
 
-missed_racesDF         = pd.DataFrame(declarations.missed_races)
-driverStandingsDF      = pd.DataFrame(declarations.driverStandings)
-ConstructorStandingsDF = pd.DataFrame(declarations.ConstructorStandings)
 
-for race in range(len(declarations.grand_prix)):
-    #scrapping for the fastest lap
-   # fastest_lap_times = scrape("fastest-laps")
+def run(year=2024):
 
-  #  fastest_lap_id = strip(fastest_lap_times[1])
+    missed_racesDF         = pd.DataFrame(declarations.missed_races)
+    driverStandingsDF      = pd.DataFrame(declarations.driverStandings)
+    ConstructorStandingsDF = pd.DataFrame(declarations.ConstructorStandings)
+    url_race_map_array = get_all_races_per_year(year)
 
-    #scrapping for the overall race results
-    race_results = scrape("race-result")
+    for race_index, link_info in enumerate(url_race_map_array):
+    
+    # scrapping for the fastest lap
+    # fastest_lap_times = scrape("fastest-laps")
 
-    sprint = 0
-    if declarations.sprint_weekends[race] == 1:
-        sprint_results = scrape("sprint-results")
-        sprint = 1
-        
-    for i in range(1, len(race_results)): # for each driver
-        if sprint == 1 :
-            fia_points = declarations.sprint_points[i-1]
-            new_points = declarations.sprint_points[i-1]
-            driverStandingsDF = append_points(sprint_results[i], fia_points, new_points, driverStandingsDF=driverStandingsDF)
-        
-        # Handle the actual grand prix
-        fia_points = declarations.FIA_points[i-1]
-        new_points = declarations.our_points[i-1]
-        driverStandingsDF = append_points(race_results[i], fia_points, new_points, driverStandingsDF=driverStandingsDF)
-           
-       # team_index  = ConstructorStandingsDF.loc[ConstructorStandingsDF["teamId"] ==  declarations.drivers_teams[int (single_data[1])]  ].index[0]
+    # fastest_lap_id = strip(fastest_lap_times[1])
 
-        #set the fastest lap point if the driver is within the new system's point range
-       # if ( int (fastest_lap_id[2]) == int (single_data[2]) and points > 0):
-        #    points = points + 1
-        #        
-    utils.pad_all_histories(driverStandingsDF, race)
+        #scrapping for the overall race results
+        race_results = scrape(link_info["url"])
+
+        sprint = 0
+        if declarations.sprint_weekends[race_index] == 2:
+            sprint_results = scrape("sprint-results")
+            sprint = 1
+            
+        for i in range(1, len(race_results)): # for each driver
+            if sprint == 1 :
+                fia_points = declarations.sprint_points[i-1]
+                new_points = declarations.sprint_points[i-1]
+                driverStandingsDF = append_points(sprint_results[i], fia_points, new_points, driverStandingsDF=driverStandingsDF, race_index=race_index)
+            
+            # Handle the actual grand prix
+            fia_points = declarations.FIA_points[i-1]
+            new_points = declarations.our_points[i-1]
+            driverStandingsDF = append_points(race_results[i], fia_points, new_points, driverStandingsDF=driverStandingsDF, race_index=race_index)
+            
+        # team_index  = ConstructorStandingsDF.loc[ConstructorStandingsDF["teamId"] ==  declarations.drivers_teams[int (single_data[1])]  ].index[0]
+
+            #set the fastest lap point if the driver is within the new system's point range
+        # if ( int (fastest_lap_id[2]) == int (single_data[2]) and points > 0):
+            #    points = points + 1
+            #        
+        utils.pad_all_histories(driverStandingsDF, race_index)
+
+if __name__ == "__main__":
+    run()

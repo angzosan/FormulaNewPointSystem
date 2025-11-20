@@ -1,7 +1,27 @@
 import requests
 import pandas as pd
+import numpy as np
+import json
 from bs4 import BeautifulSoup
 
+def prepare_data_for_simulation(driverStandingsDF, race_count):
+    """
+    Prepares the drivers' points history data for simulation by ensuring
+    all drivers have point histories of equal length.
+
+    Args:
+        driverStandingsDF (pd.DataFrame): DataFrame containing driver standings with
+            'pointHistory' and 'pointHistoryFIA' columns.
+    """
+    drivers_points = {}
+    for _, row in driverStandingsDF.iterrows():
+        cum_points = np.array(json.loads(row["pointHistory"]), dtype=int)
+        per_race_points = np.diff(cum_points, prepend=0)  # first race = cum[0] - 0
+        per_race_points = per_race_points[:race_count]
+        drivers_points[row["driverId"]] = per_race_points.tolist()
+
+    print(drivers_points)
+    return drivers_points
 
 def pad_all_histories(df, i, fill_if_empty=0):
     """

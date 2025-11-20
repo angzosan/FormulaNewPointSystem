@@ -73,10 +73,9 @@ def append_points(results,fia_points,new_points, driverStandingsDF, race_index):
 
 def run(year=2024):
 
-    missed_racesDF         = pd.DataFrame(declarations.missed_races)
     driverStandingsDF      = pd.DataFrame(declarations.driverStandings)
-    ConstructorStandingsDF = pd.DataFrame(declarations.ConstructorStandings)
     url_race_map_array = get_all_races_per_year(year)
+    countries = [item["country"] for item in url_race_map_array]
 
     for race_index, link_info in enumerate(url_race_map_array):
     
@@ -89,28 +88,22 @@ def run(year=2024):
         race_results = scrape(link_info["url"])
 
         sprint = 0
-        if declarations.sprint_weekends[race_index] == 2:
-            sprint_results = scrape("sprint-results")
+        if countries[race_index] in declarations.sprint_weekends[year]:
+            sprint_link = link_info["url"].replace('race-result', 'sprint-results')
+            sprint_results = scrape(sprint_link)
             sprint = 1
             
         for i in range(1, len(race_results)): # for each driver
-            if sprint == 1 :
-                fia_points = declarations.sprint_points[i-1]
-                new_points = declarations.sprint_points[i-1]
-                driverStandingsDF = append_points(sprint_results[i], fia_points, new_points, driverStandingsDF=driverStandingsDF, race_index=race_index)
+            sprint_fia_points = 0
+            if sprint == 2: # Sprints are not working properly, sprint_results c=variable is never used, we currently assign the sprint points in accordance with race results
+                sprint_fia_points = declarations.sprint_points[i-1]
             
             # Handle the actual grand prix
             fia_points = declarations.FIA_points[i-1]
             new_points = declarations.our_points[i-1]
-            driverStandingsDF = append_points(race_results[i], fia_points, new_points, driverStandingsDF=driverStandingsDF, race_index=race_index)
-            
-        # team_index  = ConstructorStandingsDF.loc[ConstructorStandingsDF["teamId"] ==  declarations.drivers_teams[int (single_data[1])]  ].index[0]
-
-            #set the fastest lap point if the driver is within the new system's point range
-        # if ( int (fastest_lap_id[2]) == int (single_data[2]) and points > 0):
-            #    points = points + 1
-            #        
+            driverStandingsDF = append_points(race_results[i], fia_points +  sprint_fia_points, new_points + sprint_fia_points, driverStandingsDF=driverStandingsDF, race_index=race_index)      
         utils.pad_all_histories(driverStandingsDF, race_index)
+    return driverStandingsDF, countries
 
 if __name__ == "__main__":
     run()

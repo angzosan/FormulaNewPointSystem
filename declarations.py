@@ -19,7 +19,11 @@ drivers = {
     10 : "Pierre Gasly",
     77 : "Valterri Bottas",
     2  : "Logan Sargeant",
-    38 : "Oliver Bearman"
+    38 : "Oliver Bearman",
+    50 : "Oliver Bearman",
+    43 : "Franco Colapinto",
+    30 : "Liam Lawson",
+    61 : "Jack Doohan"
 }
 
 drivers_teams = {
@@ -38,6 +42,7 @@ drivers_teams = {
     10 : 6,
     23 : 7,
     2  : 7,
+    43 : 7,
     3  : 8,
     22 : 8,
     24 : 9,
@@ -84,7 +89,9 @@ sprint_points = [8, 7, 6, 5, 4, 3 , 2, 1, 0, 0 ,0 ,0, 0, 0, 0, 0, 0, 0, 0, 0]
 grand_prix = ["bahrain","saudi-arabia", "australia", "japan","china","miami"]
 gp_code    = ["1229","1230", "1231","1232","1233","1234"]
 
-sprint_weekends = [0,0,0,0,1,1]
+sprint_weekends = {
+    2024 : ['China', 'Miami','Austria','United States', 'Brazil', 'Qatar']
+}
 
 #grand_prix = ["bahrain","italy", "portugal", "spain","monaco","azerbaijan", "france", "styria","austria", "great-britain", "hungary","belgium","netherlands", "italy", "russia","turkey", "united-states", "mexico","brazil","qatar", "saudi-arabia","abu-dhabi"]
 
